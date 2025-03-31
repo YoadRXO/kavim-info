@@ -6,10 +6,10 @@ export const GetDanBadarom = () => {
   return useQuery({
     queryKey: ["danBadarom"],
     queryFn: async () => {
-      const today = dayjs().format("YYYY/MM/DD");
+      const yesterday = dayjs().subtract(1, "day").format("YYYY/MM/DD");
       try {
         const { data } = await axios.get(
-          `https://www.danbadarom.co.il/${today}`,
+          `http://localhost:5000/api/${yesterday}`,
           {
             headers: {
               Accept:
