@@ -4,7 +4,7 @@ import { HEBREW } from "../../common/consts/hebrew";
 
 export const DanBadarom = () => {
   const date = dayjs().format("YYYY/MM/DD"); // Replace with dynamic logic if needed
-  const { data, isLoading, error } = GetRecentPosts(date);
+  const { data, isLoading } = GetRecentPosts(date);
   if (isLoading) return <div>Loading...</div>;
 
   return (
