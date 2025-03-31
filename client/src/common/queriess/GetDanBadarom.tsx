@@ -16,7 +16,7 @@ export const GetRecentPosts = (date: string) => {
             },
           }
         );
-        return data;
+        if (data) return data;
       } catch (error) {
         console.error("Error fetching recent posts:", error);
         throw error;
