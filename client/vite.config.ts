@@ -8,7 +8,7 @@ export default defineConfig({
     cors: true,
     proxy: {
       "/api": {
-        target: "http://localhost:8080",
+        target: "https://kavim-info-1.onrender.com",
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\api/, ""),
