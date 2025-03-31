@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-export const GetRecentPosts = (date: string) => {
-  return useQuery({
-    queryKey: ["recentPosts", date],
-    queryFn: async () => {
+export const GetRecentPosts = () => {
+  return useMutation({
+    mutationKey: ["recentPosts"],
+    mutationFn: async (date: string) => {
       try {
         const { data } = await axios.get(
           `https://kavim-info-1.onrender.com/api/dan-badarom`, // Fixed URL format
@@ -26,6 +26,5 @@ export const GetRecentPosts = (date: string) => {
         throw error;
       }
     },
-    enabled: !!date, // Ensures query runs only when date is provided
   });
 };
