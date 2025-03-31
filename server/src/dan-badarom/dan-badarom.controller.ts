@@ -15,13 +15,16 @@ export class ProxyController {
     }
 
     try {
-      console.log('Proxying request for date:', date);
-
       // Construct the target URL using the date
       const targetUrl = `https://www.danbadarom.co.il/${date}/`;
 
       // Make the request to the target server using axios
       const response = await axios.get(targetUrl);
+      if (response.status === 404) {
+        return res.status(HttpStatus.NOT_FOUND).json({
+          error: 'Page not found',
+        });
+      }
 
       // Parse the HTML response with Cheerio
       const $ = cheerio.load(response.data);
@@ -33,8 +36,6 @@ export class ProxyController {
         .replace(/^\s+|\s+$/g, ''); // Trim leading and trailing spaces
       // You can filter more content if needed, for example:
       // const specificDiv = $('div#specificId').text();
-
-      console.log('Extracted Div Content:', divContent);
 
       // Set the headers to indicate that we're sending HTML content
       res.setHeader('Content-Type', 'text/html; charset=UTF-8');
@@ -51,11 +52,20 @@ export class ProxyController {
       // Send the filtered content as the response (or send the whole HTML if needed)
       res.status(response.status).send(divContent); // Send filtered content, you can modify as needed
     } catch (error) {
-      console.error('Error while proxying request:', error);
+      console.error('Error while proxying request:', error.status);
+      console.error('Error while proxying request:', error.config.url);
 
-      // Handle error and send an appropriate response
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        error: 'Failed to fetch data from the target server',
+      if (axios.isAxiosError(error)) {
+        const status =
+          error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR;
+        return res.status(status).json({
+          error:
+            error.message || 'An error occurred while processing your request',
+        });
+      }
+
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        error: 'Internal Server Error',
       });
     }
   }

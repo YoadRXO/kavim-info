@@ -1,10 +1,4 @@
-import {
-  Module,
-  MiddlewareConsumer,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
-import { ProxyMiddleware } from './proxy.service';
+import { Module } from '@nestjs/common';
 import { ProxyController } from './dan-badarom.controller';
 
 @Module({
