@@ -21,7 +21,8 @@ export class ProxyController {
 
       // Make the request to the target server using axios
       const response = await axios.get(targetUrl);
-      const responsePage = await axios.get(targetPage2);
+
+      // If the first page doesn't exist (404), return a 404 error
       if (response.status === 404) {
         return res.status(HttpStatus.NOT_FOUND).json({
           error: 'Page not found',
@@ -30,19 +31,31 @@ export class ProxyController {
 
       // Parse the HTML response with Cheerio
       const pageElement1 = cheerio.load(response.data);
-      const pageElement2 = cheerio.load(responsePage.data);
-
-      // Use Cheerio to find the specific div you need (example: a div with a specific class)
-      let page1 = pageElement1('div.page-content').text(); // Example: find a div with class 'some-class'
-      let page2 = pageElement2('div.page-content').text(); // Example: find a div with class 'some-class'
+      let page1 = pageElement1('div.page-content').text(); // Example: find a div with class 'page-content'
       page1 = page1
         .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
         .replace(/^\s+|\s+$/g, ''); // Trim leading and trailing spaces
-      page2 = page2
-        .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
-        .replace(/^\s+|\s+$/g, ''); // Trim leading and trailing spaces
-      // You can filter more content if needed, for example:
-      // const specificDiv = $('div#specificId').text();
+
+      let page2 = ''; // Initialize page2 as empty string
+
+      // Only request the second page if needed
+      const responsePage = await axios.get(targetPage2).catch((error) => {
+        // Handle the case where page 2 does not exist (404 or other errors)
+        if (error.response?.status === 404) {
+          console.log('Page 2 not found, skipping.');
+          return null; // If page 2 does not exist, return null
+        }
+        throw error; // Re-throw any other error
+      });
+
+      // If responsePage is valid, process page 2 content
+      if (responsePage) {
+        const pageElement2 = cheerio.load(responsePage.data);
+        page2 = pageElement2('div.page-content').text();
+        page2 = page2
+          .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+          .replace(/^\s+|\s+$/g, ''); // Trim leading and trailing spaces
+      }
 
       // Set the headers to indicate that we're sending HTML content
       res.setHeader('Content-Type', 'text/html; charset=UTF-8');
@@ -56,13 +69,13 @@ export class ProxyController {
         'Content-Type, Authorization',
       );
 
-      // Send the filtered content as the response (or send the whole HTML if needed)
+      // Send the filtered content as the response
       res
         .status(response.status)
-        .send({ page1Content: page1, page2Content: page2 }); // Send filtered content, you can modify as needed
+        .send({ page1Content: page1, page2Content: page2 });
     } catch (error) {
       console.error('Error while proxying request:', error.status);
-      console.error('Error while proxying request:', error.config.url);
+      console.error('Error while proxying request:', error.config?.url);
 
       if (axios.isAxiosError(error)) {
         const status =
