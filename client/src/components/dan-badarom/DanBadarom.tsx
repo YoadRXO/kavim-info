@@ -19,9 +19,10 @@ export const DanBadarom = () => {
       <DatePicker onAccept={onAccept} />
       {!!data ? (
         <div>
-          {HEBREW.infoForToday} : {data.page1Content.toString()}
+          <strong>{HEBREW.infoForToday}</strong>: {data.page1Content.toString()}
           <div>
-            {HEBREW.infoForToday} : {data.page2Content.toString()}
+            <strong>{HEBREW.infoForToday}</strong>:{" "}
+            {data.page2Content.toString()}
           </div>
         </div>
       ) : (
