@@ -16,10 +16,12 @@ export class ProxyController {
 
     try {
       // Construct the target URL using the date
-      const targetUrl = `https://www.danbadarom.co.il/${date}/`;
+      const targetUrl = `https://www.danbadarom.co.il/${date}/page/1`;
+      const targetPage2 = `https://www.danbadarom.co.il/${date}/page/2`;
 
       // Make the request to the target server using axios
       const response = await axios.get(targetUrl);
+      const responsePage = await axios.get(targetPage2);
       if (response.status === 404) {
         return res.status(HttpStatus.NOT_FOUND).json({
           error: 'Page not found',
@@ -27,11 +29,16 @@ export class ProxyController {
       }
 
       // Parse the HTML response with Cheerio
-      const $ = cheerio.load(response.data);
+      const pageElement1 = cheerio.load(response.data);
+      const pageElement2 = cheerio.load(responsePage.data);
 
       // Use Cheerio to find the specific div you need (example: a div with a specific class)
-      let divContent = $('div.page-content').text(); // Example: find a div with class 'some-class'
-      divContent = divContent
+      let page1 = pageElement1('div.page-content').text(); // Example: find a div with class 'some-class'
+      let page2 = pageElement2('div.page-content').text(); // Example: find a div with class 'some-class'
+      page1 = page1
+        .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+        .replace(/^\s+|\s+$/g, ''); // Trim leading and trailing spaces
+      page2 = page2
         .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
         .replace(/^\s+|\s+$/g, ''); // Trim leading and trailing spaces
       // You can filter more content if needed, for example:
@@ -50,7 +57,9 @@ export class ProxyController {
       );
 
       // Send the filtered content as the response (or send the whole HTML if needed)
-      res.status(response.status).send(divContent); // Send filtered content, you can modify as needed
+      res
+        .status(response.status)
+        .send({ page1Content: page1, page2Content: page2 }); // Send filtered content, you can modify as needed
     } catch (error) {
       console.error('Error while proxying request:', error.status);
       console.error('Error while proxying request:', error.config.url);

@@ -3,7 +3,7 @@ import { GetRecentPosts } from "../../common/queriess/GetDanBadarom";
 import { HEBREW } from "../../common/consts/hebrew";
 
 export const DanBadarom = () => {
-  const date = dayjs().format("YYYY/MM/DD"); // Replace with dynamic logic if needed
+  const date = dayjs().subtract(1, "day").format("YYYY/MM/DD"); // Replace with dynamic logic if needed
   const { data, isLoading } = GetRecentPosts(date);
   if (isLoading) return <div>Loading...</div>;
 
@@ -11,7 +11,10 @@ export const DanBadarom = () => {
     <div>
       {!!data ? (
         <div>
-          {HEBREW.infoForToday} : {data.toString()}
+          {HEBREW.infoForToday} : {data.page1Content.toString()}
+          <div>
+            {HEBREW.infoForToday} : {data.page2Content.toString()}
+          </div>
         </div>
       ) : (
         <div>{HEBREW.noInfoForToday}</div>
