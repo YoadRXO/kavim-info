@@ -5,18 +5,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    proxy: {
-      "/api": {
-        target: "https://www.danbadarom.co.il",
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-        headers: {
-          Accept: "text/html",
-          Origin: "https://www.danbadarom.co.il", // Add this header
-          Referer: "https://www.danbadarom.co.il", // Add this header
-        },
-      },
+    cors: true,
+    headers: {
+      "access-control-allow-origin": "*",
     },
   },
 });
