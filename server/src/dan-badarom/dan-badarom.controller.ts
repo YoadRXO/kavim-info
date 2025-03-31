@@ -16,7 +16,7 @@ export class ProxyController {
 
     try {
       // Construct the target URL using the date
-      const targetUrl = `https://www.danbadarom.co.il/${date}/page/1`;
+      const targetUrl = `https://www.danbadarom.co.il/${date}`;
       const targetPage2 = `https://www.danbadarom.co.il/${date}/page/2`;
 
       // Make the request to the target server using axios
