@@ -1,17 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+
 export const GetRecentPosts = (date: string) => {
   return useQuery({
     queryKey: ["recentPosts", date],
     queryFn: async () => {
       try {
-        const { data } = await axios.get(`http://localhost:8080/api/${date}`, {
-          headers: {
-            Accept:
-              "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-          },
-        });
-      
+        const { data } = await axios.get(
+          `/api/dan-badarom`, // Fixed URL format
+          {
+            params: { date },
+            headers: {
+              Accept:
+                "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            },
+          }
+        );
         return data;
       } catch (error) {
         console.error("Error fetching recent posts:", error);

@@ -1,15 +1,11 @@
-import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { DanBadaromModule } from './dan-badarom/dan-badarom.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProxyMiddleware } from './proxy.service';
 
 @Module({
-  imports: [],
+  imports: [DanBadaromModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(ProxyMiddleware).forRoutes('api/:date');
-  }
-}
+export class AppModule {}

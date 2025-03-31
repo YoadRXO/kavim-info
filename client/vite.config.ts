@@ -6,8 +6,13 @@ export default defineConfig({
   server: {
     port: 3000,
     cors: true,
-    headers: {
-      "access-control-allow-origin": "*",
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\api/, ""),
+      },
     },
   },
 });
