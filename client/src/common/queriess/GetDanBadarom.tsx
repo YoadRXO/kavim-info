@@ -7,7 +7,7 @@ export const GetRecentPosts = (date: string) => {
     queryFn: async () => {
       try {
         const { data } = await axios.get(
-          `/api/dan-badarom`, // Fixed URL format
+          `https://kavim-info-1.onrender.com/api/dan-badarom`, // Fixed URL format
           {
             params: { date },
             headers: {
